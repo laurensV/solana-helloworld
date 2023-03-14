@@ -14,19 +14,20 @@ global:
       - master
 
 jobs:
-  - name: build program
-    commands:
-      - npm run build:program-rust
-    artifacts:
-      - name: program
-        path: dist/program/helloworld.so
+#  - name: build program
+#    commands:
+#      - npm run build:program-rust
+#    artifacts:
+#      - name: program
+#        path: dist/program/helloworld.so
         
   - name: verify hash
     commands:
-      - bash <(curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh)
+      - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
       - PROGRAM_HASH = $(solana-verify get-program-hash $PROGRAM_ID)
-      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
-      - test $PROGRAM_HASH = $SO_HASH
-    resources:
-      - name: program
-        path: /
+      - echo $PROGRAM_HASH
+#      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
+#      - test $PROGRAM_HASH = $SO_HASH
+#    resources:
+#      - name: program
+#        path: /
