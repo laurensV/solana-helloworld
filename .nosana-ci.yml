@@ -24,7 +24,7 @@ jobs:
   - name: verify hash
     commands:
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
-      - PROGRAM_HASH = $(solana-verify get-program-hash $PROGRAM_ID)
+      - PROGRAM_HASH = $(/root/bin/solana-verify get-program-hash $PROGRAM_ID)
       - echo $PROGRAM_HASH
 #      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
 #      - test $PROGRAM_HASH = $SO_HASH
