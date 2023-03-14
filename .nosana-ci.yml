@@ -20,6 +20,11 @@ jobs:
 #    artifacts:
 #      - name: program
 #        path: dist/program/helloworld.so
+  - name: test
+    commands:
+      - ls -al ~/.config
+      - cat ~/.config/solana/cli/config.yml
+      - solana config get
   - name: verify hash
     image: ubuntu:latest
     commands:
