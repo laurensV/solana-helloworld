@@ -22,9 +22,9 @@ jobs:
 #        path: dist/program/helloworld.so
   - name: test
     commands:
-      - ls -al ~/.config
-      - cat ~/.config/solana/cli/config.yml
+      - ls -al ~/.config/solana
       - solana config get
+      - cat ~/.config/solana/cli/config.yml
   - name: verify hash
     image: ubuntu:latest
     commands:
