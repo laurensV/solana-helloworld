@@ -7,7 +7,7 @@ global:
 
   environment:
     SOLANA_URL: devnet # testnet / devnet / mainnet / <your-custom-sol-rpc>
-    PROGRAM_ID: nosJhNRqr2bc9g1nfGDcXXTXvYUmxD4cVwy2pMWhrYM
+    PROGRAM_ID: Avrqn8UZa2EeGMHt9N7sDsxGcHTcWGYuWu8EXcyN3tv1
 
   trigger:
     branch:
@@ -22,13 +22,12 @@ jobs:
 #        path: dist/program/helloworld.so
   - name: test
     commands:
-      - ls -al ~/.config/solana
-      - solana config set --url devnet
+      - solana config set --url $SOLANA_URL
       - solana config get
       - cat ~/.config/solana/cli/config.yml
     artifacts:
       - name: config
-        path: ~/.config
+        path: /root/.config
   - name: verify hash
     image: ubuntu:latest
     commands:
@@ -42,4 +41,4 @@ jobs:
 #      - test $PROGRAM_HASH = $SO_HASH
     resources:
       - name: config
-        path: ~/
+        path: /
