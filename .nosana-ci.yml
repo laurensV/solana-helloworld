@@ -7,7 +7,7 @@ global:
 
   environment:
     SOLANA_URL: devnet # testnet / devnet / mainnet / <your-custom-sol-rpc>
-    PROGRAM_ID: Avrqn8UZa2EeGMHt9N7sDsxGcHTcWGYuWu8EXcyN3tv1
+    PROGRAM_ID: nosJhNRqr2bc9g1nfGDcXXTXvYUmxD4cVwy2pMWhrYM
 
   trigger:
     branch:
