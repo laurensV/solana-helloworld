@@ -22,6 +22,7 @@ jobs:
 #        path: dist/program/helloworld.so
         
   - name: verify hash
+    image: ellipsislabs/solana:latest
     commands:
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
       - PROGRAM_HASH = $(/root/bin/solana-verify get-program-hash $PROGRAM_ID)
