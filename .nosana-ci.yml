@@ -14,12 +14,12 @@ global:
       - master
 
 jobs:
-#  - name: build program
-#    commands:
-#      - npm run build:program-rust
-#    artifacts:
-#      - name: program
-#        path: dist/program/helloworld.so
+  - name: build program
+    commands:
+      - npm run build:program-rust
+    artifacts:
+      - name: program
+        path: dist/program/helloworld.so
   - name: test
     commands:
       - solana config set --url $SOLANA_URL
@@ -32,13 +32,13 @@ jobs:
     image: ubuntu:latest
     commands:
       - ldd --version
-      - apt-get -y update; apt-get -y install curl
+      - apt-get -y install curl
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
-      - /root/bin/solana-verify get-program-hash $PROGRAM_ID
       - /root/bin/solana-verify get-program-hash $PROGRAM_ID > program_hash.txt
-      - cat program_hash.txt
-#      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
-#      - test $PROGRAM_HASH = $SO_HASH
+      - /root/bin/solana-verify get-executable-hash /dist/program/helloworld.so > executable_hash.txt
+      - test $(cat program_hash.txt) = $(cat executable_hash.txt)
     resources:
       - name: config
         path: /
+      - name: program
+        path: /    
