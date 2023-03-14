@@ -1,0 +1,32 @@
+
+nosana:
+  description: Nosana x Squads Deployment
+
+global:
+  image: nosana/solana:v1.0.5
+
+  environment:
+    SOLANA_URL: devnet # testnet / devnet / mainnet / <your-custom-sol-rpc>
+    PROGRAM_ID: Avrqn8UZa2EeGMHt9N7sDsxGcHTcWGYuWu8EXcyN3tv1
+
+  trigger:
+    branch:
+      - master
+
+jobs:
+  - name: build program
+    commands:
+      - npm run build:program-rust
+    artifacts:
+      - name: program
+        path: dist/program/helloworld.so
+        
+  - name: verify hash
+    commands:
+      - bash <(curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh)
+      - PROGRAM_HASH = $(solana-verify get-program-hash $PROGRAM_ID)
+      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
+      - test $PROGRAM_HASH = $SO_HASH
+    resources:
+      - name: program
+        path: /
