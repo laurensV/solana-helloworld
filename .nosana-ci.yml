@@ -26,8 +26,9 @@ jobs:
       - ldd --version
       - apt-get -y update; apt-get -y install curl
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
-      - PROGRAM_HASH = $(/root/bin/solana-verify get-program-hash $PROGRAM_ID)
-      - echo $PROGRAM_HASH
+      - /root/bin/solana-verify get-program-hash $PROGRAM_ID
+      - /root/bin/solana-verify get-program-hash $PROGRAM_ID > program_hash.txt
+      - cat program_hash.txt
 #      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
 #      - test $PROGRAM_HASH = $SO_HASH
 #    resources:
