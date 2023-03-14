@@ -20,7 +20,7 @@ jobs:
 #    artifacts:
 #      - name: program
 #        path: dist/program/helloworld.so
-  - name: verify hash
+  - name: check ubuntu
     image: ubuntu:latest
     commands:
       - ldd --version
