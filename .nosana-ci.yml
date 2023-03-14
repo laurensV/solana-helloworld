@@ -20,13 +20,8 @@ jobs:
 #    artifacts:
 #      - name: program
 #        path: dist/program/helloworld.so
-  - name: check ubuntu
-    image: ubuntu:latest
-    commands:
-      - ldd --version
-          
   - name: verify hash
-    image: ellipsislabs/solana:latest
+    image: ubuntu:latest
     commands:
       - ldd --version
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
