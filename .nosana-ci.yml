@@ -23,8 +23,12 @@ jobs:
   - name: test
     commands:
       - ls -al ~/.config/solana
+      - solana config set --url devnet
       - solana config get
       - cat ~/.config/solana/cli/config.yml
+    artifacts:
+      - name: config
+        path: ~/.config
   - name: verify hash
     image: ubuntu:latest
     commands:
@@ -36,6 +40,6 @@ jobs:
       - cat program_hash.txt
 #      - SO_HASH = $(solana-verify get-executable-hash /dist/program/helloworld.so)
 #      - test $PROGRAM_HASH = $SO_HASH
-#    resources:
-#      - name: program
-#        path: /
+    resources:
+      - name: config
+        path: ~/
