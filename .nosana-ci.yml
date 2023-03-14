@@ -20,25 +20,22 @@ jobs:
     artifacts:
       - name: program
         path: dist/program/helloworld.so
-  - name: test
+  - name: solana config
     commands:
       - solana config set --url $SOLANA_URL
-      - solana config get
-      - cat ~/.config/solana/cli/config.yml
     artifacts:
       - name: config
         path: /root/.config
   - name: verify hash
     image: ubuntu:latest
     commands:
-      - ldd --version
       - apt-get -y update; apt-get -y install curl
       - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
       - /root/bin/solana-verify get-program-hash $PROGRAM_ID > program_hash.txt
       - /root/bin/solana-verify get-executable-hash /dist/program/helloworld.so > executable_hash.txt
-      - test $(cat program_hash.txt) != $(cat executable_hash.txt) && echo 'Hashes are different, continue deploying..' || echo 'Hashes already the same'
+      - test $(cat program_hash.txt) != $(cat executable_hash.txt) && echo 'Hashes are different, continue deploying..' || (echo 'Hashes already the same' && exit 1)
     resources:
       - name: config
         path: /
       - name: program
-        path: /    
+        path: /
