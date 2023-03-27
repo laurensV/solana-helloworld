@@ -1,13 +1,13 @@
-
 nosana:
-  description: Nosana x Squads Deployment
+  description: Solana hello world multisig
 
 global:
-  image: nosana/solana:v1.0.5
+  image: nosana/solana:v1.0.15
 
   environment:
-    SOLANA_URL: devnet # testnet / devnet / mainnet / <your-custom-sol-rpc>
-    PROGRAM_ID: Avrqn8UZa2EeGMHt9N7sDsxGcHTcWGYuWu8EXcyN3tv1
+    AUTHORITY_PUBKEY: 9HgALjiPNoh7TbCP7h5FRUFggD1q3UjLfiU9AbTGmSGc
+    MULTISIG_PUBKEY: 3TsTokHbDvRqsymuC5LZrK2NkUQG2LHxAShydPY2A1Cj
+    SQUADS_PUBKEY: GmpDbY3M5KXM9TPooZziM7SC5rT9YZZ1sf3AfTcyZwAs
 
   trigger:
     branch:
@@ -20,21 +20,51 @@ jobs:
     artifacts:
       - name: program
         path: dist/program/helloworld.so
-  - name: solana config
+
+  - name: write buffer
+    environment:
+    secrets:
+      - SOLANA_WALLET
     commands:
-      - solana config set --url $SOLANA_URL
-    artifacts:
-      - name: config
-        path: /root/.config
-  - name: verify hash
-    image: nosana/ubuntu-curl:latest
-    commands:
-      - curl -sSf https://raw.githubusercontent.com/Ellipsis-Labs/solana-verifiable-build/master/verifier-cli-install.sh | bash
-      - /root/bin/solana-verify get-program-hash $PROGRAM_ID > program_hash.txt
-      - /root/bin/solana-verify get-executable-hash /dist/program/helloworld.so > executable_hash.txt
-      - test $(cat program_hash.txt) != $(cat executable_hash.txt) && echo 'Hashes are different, continue deploying..' || (echo 'Hashes already the same' && exit 1)
+      - mkdir solana
+      - echo $SOLANA_WALLET > solana/private-key.json
+      - solana config set --url devnet --keypair solana/private-key.json
+      - solana address > solana/spill.txt
+      - solana program write-buffer /helloworld.so | tee solana/buffer.txt
+      - solana program set-buffer-authority "$(cut -d ' ' -f2 < solana/buffer.txt)" --new-buffer-authority $AUTHORITY_PUBKEY
     resources:
-      - name: config
-        path: /
       - name: program
         path: /
+    artifacts:
+      - name: solana
+        path: solana
+
+  - name: squads deploy
+    commands:
+      - |
+        nosana-cli create-program-upgrade                        \
+          --name        upgradeTest                              \
+          --private-key /solana/private-key.json                 \
+          --buffer      "$(cut -d ' ' -f2 < /solana/buffer.txt)" \
+          --spill       "$(cat /solana/spill.txt)"               \
+          --multisig    $MULTISIG_PUBKEY                         \
+          --program     $SQUADS_PUBKEY                           \
+          --approve                                              \
+          --authority   $AUTHORITY_PUBKEY | tee /solana/squads-deploy.json
+    resources:
+      - name: solana
+        path: /
+    artifacts:
+      - name: solana
+        path: /solana
+
+  - name: wait for deploy
+    commands:
+      - |
+        nosana-cli await-upgrade                                 \
+          --private-key solana/private-key.json                  \
+          --program     $SQUADS_PUBKEY                           \
+          --index       "$(cat solana/squads-deploy.json | tail -n 1 | jq '.upgradeIndex')"
+    resources:
+      - name: solana
+        path: ./
