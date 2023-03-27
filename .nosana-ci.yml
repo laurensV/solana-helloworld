@@ -43,7 +43,7 @@ jobs:
     commands:
       - |
         nosana-cli create-program-upgrade                        \
-          --name        upgradeTest                              \
+          --name        upgradeTest2                             \
           --private-key /solana/private-key.json                 \
           --buffer      "$(cut -d ' ' -f2 < /solana/buffer.txt)" \
           --spill       "$(cat /solana/spill.txt)"               \
@@ -54,17 +54,3 @@ jobs:
     resources:
       - name: solana
         path: /
-    artifacts:
-      - name: solana
-        path: /solana
-
-  - name: wait for deploy
-    commands:
-      - |
-        nosana-cli await-upgrade                                 \
-          --private-key solana/private-key.json                  \
-          --program     $SQUADS_PUBKEY                           \
-          --index       "$(cat solana/squads-deploy.json | tail -n 1 | jq '.upgradeIndex')"
-    resources:
-      - name: solana
-        path: ./
