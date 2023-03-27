@@ -49,7 +49,6 @@ jobs:
           --spill       "$(cat /solana/spill.txt)"               \
           --multisig    $MULTISIG_PUBKEY                         \
           --program     $SQUADS_PUBKEY                           \
-          --approve                                              \
           --authority   $AUTHORITY_PUBKEY | tee /solana/squads-deploy.json
     resources:
       - name: solana
