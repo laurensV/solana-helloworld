@@ -2,7 +2,7 @@ nosana:
   description: Solana hello world
 
 global:
-  image: nosana/solana:v1.0.15
+  image: nosana/solana:v1.0.16
 
   environment:
     AUTHORITY_PUBKEY: 9HgALjiPNoh7TbCP7h5FRUFggD1q3UjLfiU9AbTGmSGc
@@ -49,6 +49,7 @@ jobs:
           --spill       "$(cat /solana/spill.txt)"               \
           --multisig    $MULTISIG_PUBKEY                         \
           --program     $SQUADS_PUBKEY                           \
+          --approve                                              \
           --authority   $AUTHORITY_PUBKEY | tee /solana/squads-deploy.json
     resources:
       - name: solana
